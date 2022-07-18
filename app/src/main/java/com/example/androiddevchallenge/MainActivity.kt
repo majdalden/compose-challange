@@ -18,12 +18,33 @@ package com.example.androiddevchallenge
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.androiddevchallenge.ui.theme.MyTheme
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.androiddevchallenge.ui.theme.*
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,9 +60,243 @@ class MainActivity : AppCompatActivity() {
 // Start building your app here!
 @Composable
 fun MyApp() {
-    Surface(color = MaterialTheme.colors.background) {
-        Text(text = "Ready... Set... GO!")
+    MyBox()
+}
+
+@Composable
+fun MyBox(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .background(color = gray2)
+    ) {
+        TopImage(Modifier.align(Alignment.TopCenter))
+        LogoImage(Modifier.align(Alignment.TopCenter))
+
+        MyColumn(Modifier.align(Alignment.Center))
+
+        BottomImage(Modifier.align(Alignment.BottomCenter))
     }
+}
+
+@Composable
+fun MyColumn(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+//            .align(Alignment.Center)
+    ) {
+        MyTextSignIn(Modifier.align(alignment = Alignment.CenterHorizontally))
+        MyTextFieldEmail(Modifier.align(alignment = Alignment.CenterHorizontally))
+        MyTextFieldPassword(Modifier.align(alignment = Alignment.CenterHorizontally))
+        MyButtonSignIn(Modifier.align(alignment = Alignment.CenterHorizontally))
+    }
+}
+
+@Composable
+fun MyButtonSignIn(modifier: Modifier = Modifier) {
+    Button(
+        onClick = {
+
+        },
+        modifier = modifier
+            .fillMaxWidth()
+//            .align(alignment = Alignment.CenterHorizontally)
+            .padding(start = 16.dp, end = 16.dp, top = 20.dp),
+//                shape= RoundedCornerShape(size = 30.dp),
+        shape = RoundedCornerShape(50),
+        colors = ButtonDefaults.buttonColors(backgroundColor = purple2)
+    )
+    {
+        Icon(
+            painterResource(id = R.drawable.ic_send_white_24),
+            contentDescription = "Localized description",
+            tint = Color.White,
+            modifier = Modifier
+                .padding(4.dp)
+        )
+    }
+}
+
+@Composable
+fun MyTextFieldPassword(modifier: Modifier = Modifier) {
+    val textValue = remember { mutableStateOf("") }
+    var passwordVisibility by remember { mutableStateOf(false) }
+
+    TextField(
+        value = textValue.value,
+        onValueChange = {
+            textValue.value = it
+        },
+        modifier = modifier
+            .fillMaxWidth()
+//            .align(alignment = Alignment.CenterHorizontally)
+            .padding(start = 16.dp, end = 16.dp, top = 10.dp)
+            .border(
+                width = 1.dp,
+                color = gray3,
+                RoundedCornerShape(50)
+            )
+            .clip(RoundedCornerShape(50)),
+        placeholder = {
+            Text(
+                fontSize = 16.sp,
+                text = stringResource(id = R.string.password),
+                color = gray1,
+                fontFamily = FontFamily(
+                    Font(
+                        resId = R.font.quicksand_regular
+                    )
+                )
+            )
+        },
+        colors = TextFieldDefaults.textFieldColors(
+            backgroundColor = Color.White,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent,
+        ),
+        leadingIcon = {
+            Icon(
+                painterResource(id = R.drawable.ic_lock_outline_purple1_24),
+                contentDescription = "Localized description",
+                tint = purple2,
+                modifier = Modifier
+                    .padding(4.dp)
+            )
+        },
+        trailingIcon = {
+            IconButton(onClick = {
+                passwordVisibility = !passwordVisibility
+            }) {
+                Icon(
+//                            painterResource(id = R.drawable.ic_baseline_remove_red_eye_24),
+                    if (passwordVisibility) painterResource(id = R.drawable.ic_baseline_eye_slash_24) else painterResource(
+                        id = R.drawable.ic_baseline_eye_24
+                    ),
+                    contentDescription = "",
+                    tint = purple2,
+                    modifier = Modifier
+                        .padding(4.dp)
+                )
+            }
+        },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+        visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
+    )
+}
+
+@Composable
+fun MyTextFieldEmail(modifier: Modifier = Modifier) {
+    val textValue = remember { mutableStateOf("") }
+
+    TextField(
+        value = textValue.value,
+        onValueChange = {
+            textValue.value = it
+        },
+        modifier = modifier
+            .fillMaxWidth()
+//            .align(alignment = Alignment.CenterHorizontally)
+            .padding(start = 16.dp, end = 16.dp, top = 32.dp)
+            .border(
+                width = 1.dp,
+                color = gray3,
+                RoundedCornerShape(50)
+            )
+            .clip(RoundedCornerShape(50)),
+        placeholder = {
+            Text(
+                fontSize = 16.sp,
+                text = stringResource(id = R.string.email),
+                color = gray1,
+                fontFamily = FontFamily(
+                    Font(
+                        resId = R.font.quicksand_regular
+                    )
+                )
+            )
+        },
+        colors = TextFieldDefaults.textFieldColors(
+            backgroundColor = Color.White,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent,
+        ),
+        leadingIcon = {
+            Icon(
+                painterResource(id = R.drawable.ic_person_outline_purple1_24),
+                contentDescription = "Localized description",
+                tint = purple2,
+                modifier = Modifier
+                    .padding(4.dp)
+            )
+        },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+    )
+}
+
+@Composable
+fun MyTextSignIn(modifier: Modifier = Modifier) {
+    Text(
+        text = stringResource(id = R.string.sign_in),
+        style = TextStyle(
+            fontSize = 29.sp,
+            color = purple2,
+            fontFamily = FontFamily(
+                Font(
+                    resId = R.font.quicksand_bold,
+                    weight = FontWeight.Bold,
+                    style = FontStyle.Normal
+                )
+            )
+        ),
+        modifier = modifier
+//            .align(alignment = Alignment.CenterHorizontally)
+            .padding(start = 16.dp, end = 16.dp, top = 8.dp)
+    )
+}
+
+@Composable
+fun BottomImage(modifier: Modifier = Modifier) {
+    Image(
+        painter = painterResource(R.drawable.img_background_bottom),
+        contentDescription = "img_background_bottom",
+        contentScale = ContentScale.Crop,
+        modifier = modifier
+            .fillMaxWidth()
+            .offset(y = (44).dp)
+            .height(height = 170.dp)
+//            .align(Alignment.BottomCenter)
+    )
+}
+
+@Composable
+fun LogoImage(modifier: Modifier = Modifier) {
+    Image(
+        painter = painterResource(R.drawable.img_logo),
+        contentDescription = "img_logo",
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(20.dp)
+        /*.align(Alignment.TopCenter)*/
+    )
+}
+
+@Composable
+fun TopImage(modifier: Modifier = Modifier) {
+    Image(
+        painter = painterResource(R.drawable.img_background_top),
+        contentDescription = "img_background_top",
+        contentScale = ContentScale.Crop,
+        modifier = modifier
+            .fillMaxWidth()
+            .offset(y = (-44).dp)
+            .height(height = 170.dp)
+        /*.align(Alignment.TopCenter)*/
+    )
 }
 
 @Preview("Light Theme", widthDp = 360, heightDp = 640)
