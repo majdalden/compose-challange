@@ -23,15 +23,19 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -45,6 +49,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.androiddevchallenge.ui.theme.*
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.ImeAction
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -90,7 +96,6 @@ fun LoginSection(modifier: Modifier = Modifier) {
         modifier = modifier
             .fillMaxWidth()
             .padding(16.dp)
-//            .align(Alignment.Center)
     ) {
         SignInText(Modifier.align(alignment = Alignment.CenterHorizontally))
         EmailTextField(Modifier.align(alignment = Alignment.CenterHorizontally))
@@ -114,7 +119,6 @@ fun TopImage(modifier: Modifier = Modifier) {
             .fillMaxWidth()
             .offset(y = (-44).dp)
             .height(height = 170.dp)
-        /*.align(Alignment.TopCenter)*/
     )
 }
 
@@ -126,7 +130,6 @@ fun LogoImage(modifier: Modifier = Modifier) {
         modifier = modifier
             .fillMaxWidth()
             .padding(20.dp)
-        /*.align(Alignment.TopCenter)*/
     )
 }
 
@@ -146,77 +149,40 @@ fun SignInText(modifier: Modifier = Modifier) {
             )
         ),
         modifier = modifier
-//            .align(alignment = Alignment.CenterHorizontally)
             .padding(start = 16.dp, end = 16.dp, top = 8.dp)
     )
 }
 
 @Composable
 fun EmailTextField(modifier: Modifier = Modifier) {
-    val textValue = remember { mutableStateOf("") }
+    var textValue by remember { mutableStateOf("") }
 
     AuthTextField(
         modifier = modifier,
         textValue = textValue,
+        onValueChanged = {
+            textValue = it
+        },
         placeholder = stringResource(id = R.string.email),
         leadingIconPainter = painterResource(id = R.drawable.ic_person_outline_purple1_24),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
-    )
-
-    /*TextField(
-        value = textValue.value,
-        onValueChange = {
-            textValue.value = it
-        },
-        modifier = modifier
-            .fillMaxWidth()
-//            .align(alignment = Alignment.CenterHorizontally)
-            .padding(start = 16.dp, end = 16.dp, top = 32.dp)
-            .border(
-                width = 1.dp,
-                color = gray3,
-                RoundedCornerShape(50)
-            )
-            .clip(RoundedCornerShape(50)),
-        placeholder = {
-            Text(
-                fontSize = 16.sp,
-                text = stringResource(id = R.string.email),
-                color = gray1,
-                fontFamily = FontFamily(
-                    Font(
-                        resId = R.font.quicksand_regular
-                    )
-                )
-            )
-        },
-        colors = TextFieldDefaults.textFieldColors(
-            backgroundColor = Color.White,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent,
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Email,
+            imeAction = ImeAction.Next
         ),
-        leadingIcon = {
-            Icon(
-                painterResource(id = R.drawable.ic_person_outline_purple1_24),
-                contentDescription = "Localized description",
-                tint = purple2,
-                modifier = Modifier
-                    .padding(4.dp)
-            )
-        },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
-    )*/
+    )
 }
 
 @Composable
 fun PasswordTextField(modifier: Modifier = Modifier) {
-    val textValue = remember { mutableStateOf("") }
+    var textValue by remember { mutableStateOf("") }
     var passwordVisibility by remember { mutableStateOf(false) }
 
     AuthTextField(
         modifier = modifier,
         textValue = textValue,
+        onValueChanged = {
+            textValue = it
+        },
         placeholder = stringResource(id = R.string.password),
         leadingIconPainter = painterResource(id = R.drawable.ic_lock_outline_purple1_24),
         trailingIcon = {
@@ -224,7 +190,6 @@ fun PasswordTextField(modifier: Modifier = Modifier) {
                 passwordVisibility = !passwordVisibility
             }) {
                 Icon(
-//                            painterResource(id = R.drawable.ic_baseline_remove_red_eye_24),
                     if (passwordVisibility) painterResource(id = R.drawable.ic_baseline_eye_slash_24) else painterResource(
                         id = R.drawable.ic_baseline_eye_24
                     ),
@@ -235,70 +200,12 @@ fun PasswordTextField(modifier: Modifier = Modifier) {
                 )
             }
         },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Password,
+            imeAction = ImeAction.Done
+        ),
         visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation()
     )
-    /*TextField(
-        value = textValue.value,
-        onValueChange = {
-            textValue.value = it
-        },
-        modifier = modifier
-            .fillMaxWidth()
-//            .align(alignment = Alignment.CenterHorizontally)
-            .padding(start = 16.dp, end = 16.dp, top = 10.dp)
-            .border(
-                width = 1.dp,
-                color = gray3,
-                RoundedCornerShape(50)
-            )
-            .clip(RoundedCornerShape(50)),
-        placeholder = {
-            Text(
-                fontSize = 16.sp,
-                text = stringResource(id = R.string.password),
-                color = gray1,
-                fontFamily = FontFamily(
-                    Font(
-                        resId = R.font.quicksand_regular
-                    )
-                )
-            )
-        },
-        colors = TextFieldDefaults.textFieldColors(
-            backgroundColor = Color.White,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent,
-        ),
-        leadingIcon = {
-            Icon(
-                painterResource(id = R.drawable.ic_lock_outline_purple1_24),
-                contentDescription = "Localized description",
-                tint = purple2,
-                modifier = Modifier
-                    .padding(4.dp)
-            )
-        },
-        trailingIcon = {
-            IconButton(onClick = {
-                passwordVisibility = !passwordVisibility
-            }) {
-                Icon(
-//                            painterResource(id = R.drawable.ic_baseline_remove_red_eye_24),
-                    if (passwordVisibility) painterResource(id = R.drawable.ic_baseline_eye_slash_24) else painterResource(
-                        id = R.drawable.ic_baseline_eye_24
-                    ),
-                    contentDescription = "",
-                    tint = purple2,
-                    modifier = Modifier
-                        .padding(4.dp)
-                )
-            }
-        },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-        visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
-    )*/
 }
 
 @Composable
@@ -309,9 +216,7 @@ fun SignInButton(modifier: Modifier = Modifier) {
         },
         modifier = modifier
             .fillMaxWidth()
-//            .align(alignment = Alignment.CenterHorizontally)
             .padding(start = 16.dp, end = 16.dp, top = 20.dp),
-//                shape= RoundedCornerShape(size = 30.dp),
         shape = RoundedCornerShape(50),
         colors = ButtonDefaults.buttonColors(backgroundColor = purple2)
     )
@@ -336,14 +241,15 @@ fun BottomImage(modifier: Modifier = Modifier) {
             .fillMaxWidth()
             .offset(y = (44).dp)
             .height(height = 170.dp)
-//            .align(Alignment.BottomCenter)
     )
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun AuthTextField(
     modifier: Modifier = Modifier,
-    textValue: MutableState<String> = remember { mutableStateOf("") },
+    textValue: String = "",
+    onValueChanged: ((String) -> Unit)? = null,
     placeholder: String = "",
     leadingIconPainter: Painter? = null,
     leadingIcon: @Composable (() -> Unit)? = null,
@@ -352,14 +258,15 @@ fun AuthTextField(
     keyboardOptions: KeyboardOptions? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None
 ) {
+
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+
     TextField(
-        value = textValue.value,
-        onValueChange = {
-            textValue.value = it
-        },
+        value = textValue,
+        onValueChange = onValueChanged ?: {},
         modifier = modifier
             .fillMaxWidth()
-//            .align(alignment = Alignment.CenterHorizontally)
             .padding(start = 16.dp, end = 16.dp, top = 32.dp)
             .border(
                 width = 1.dp,
@@ -408,6 +315,13 @@ fun AuthTextField(
             }
         },
         keyboardOptions = keyboardOptions ?: KeyboardOptions.Default,
+        keyboardActions = KeyboardActions(
+            onNext = { focusManager.moveFocus(FocusDirection.Next) },
+            onDone = {
+                keyboardController?.hideSoftwareKeyboard()
+                focusManager.clearFocus()
+            }
+        ),
         visualTransformation = visualTransformation
     )
 }
