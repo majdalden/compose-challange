@@ -15,12 +15,15 @@
  */
 package com.example.androiddevchallenge
 
+import android.content.Context
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -35,6 +38,7 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -51,8 +55,13 @@ import androidx.compose.ui.unit.sp
 import com.example.androiddevchallenge.ui.theme.*
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.unit.TextUnit
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -63,17 +72,17 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
+fun toast(context: Context, s: String) {
+    Toast
+        .makeText(context, s, Toast.LENGTH_SHORT)
+        .show()
+}
+
 // Start building your app here!
 @Composable
 fun MyApp() {
-    MyBox()
-}
-
-
-@Composable
-fun MyBox(modifier: Modifier = Modifier) {
     Box(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
             .background(color = gray2)
@@ -97,7 +106,7 @@ fun LoginSection(modifier: Modifier = Modifier) {
             .fillMaxWidth()
             .padding(16.dp)
     ) {
-        SignInText(Modifier.align(alignment = Alignment.CenterHorizontally))
+        SigInText(Modifier.align(alignment = Alignment.CenterHorizontally))
         EmailTextField(Modifier.align(alignment = Alignment.CenterHorizontally))
         PasswordTextField(Modifier.align(alignment = Alignment.CenterHorizontally))
         SignInButton(Modifier.align(alignment = Alignment.CenterHorizontally))
@@ -107,6 +116,7 @@ fun LoginSection(modifier: Modifier = Modifier) {
 @Composable
 fun FooterSection(modifier: Modifier = Modifier) {
     BottomImage(modifier)
+    NewAccountText(modifier)
 }
 
 @Composable
@@ -134,22 +144,44 @@ fun LogoImage(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun SignInText(modifier: Modifier = Modifier) {
+fun AuthText(
+    modifier: Modifier = Modifier,
+    text: String = "",
+    fontSize: TextUnit = 14.sp,
+    color: Color = purple2,
+    fontFamily: FontFamily = FontFamily(
+        Font(
+            resId = R.font.quicksand_regular,
+            weight = FontWeight.Normal,
+            style = FontStyle.Normal
+        )
+    )
+) {
     Text(
-        text = stringResource(id = R.string.sign_in),
+        text = text,
         style = TextStyle(
-            fontSize = 29.sp,
-            color = purple2,
-            fontFamily = FontFamily(
-                Font(
-                    resId = R.font.quicksand_bold,
-                    weight = FontWeight.Bold,
-                    style = FontStyle.Normal
-                )
-            )
+            fontSize = fontSize,
+            color = color,
+            fontFamily = fontFamily
         ),
         modifier = modifier
-            .padding(start = 16.dp, end = 16.dp, top = 8.dp)
+    )
+}
+
+@Composable
+fun SigInText(modifier: Modifier = Modifier) {
+    AuthText(
+        modifier = modifier
+            .padding(start = 16.dp, end = 16.dp, top = 8.dp),
+        text = stringResource(R.string.sign_in),
+        fontSize = 29.sp,
+        fontFamily = FontFamily(
+            Font(
+                resId = R.font.quicksand_bold,
+                weight = FontWeight.Bold,
+                style = FontStyle.Normal
+            )
+        ),
     )
 }
 
@@ -239,8 +271,21 @@ fun BottomImage(modifier: Modifier = Modifier) {
         contentScale = ContentScale.Crop,
         modifier = modifier
             .fillMaxWidth()
-            .offset(y = (44).dp)
-            .height(height = 170.dp)
+            .offset(y = (100).dp)
+//            .height(height = 130.dp)
+    )
+}
+
+@Composable
+fun NewAccountText(modifier: Modifier = Modifier) {
+    val mContext = LocalContext.current
+    AuthText(
+        modifier = modifier
+            .clickable {
+                toast(mContext, "New Account")
+            }
+            .padding(all = 20.dp),
+        text = stringResource(R.string.auth_new_account_message),
     )
 }
 

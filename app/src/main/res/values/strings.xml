@@ -13,4 +13,5 @@
     <string name="sign_in">Sign in</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
+    <string name="auth_new_account_message">I am new here, i need an account</string>
 </resources>
